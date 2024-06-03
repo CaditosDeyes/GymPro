@@ -1,0 +1,2 @@
+npm install -g react-native-cli
+npx react-native@latest init GymPro
