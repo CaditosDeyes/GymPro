@@ -1,2 +1,6 @@
 npm install -g react-native-cli
 npx react-native@latest init GymPro
+npm install @react-navigation/native
+npm install @react-navigation/native-stack
+npm install react-native-safe-area-context
+npm install react-native-screens react-native-safe-area-context
