@@ -34,7 +34,7 @@ const Inicio = () => {
   return (
     <ImageBackground source={require('../img/background_image.jpg')} style={styles.background}>
       <View style={styles.container}>
-        <Image source={require('../img/Logo_GymPro.png')} style={styles.logoImage} />
+        <Image source={require('../img/gymProLogo.png')} style={styles.logoImage} />
         <Text style={styles.txtBienvenida}>El acompañante perfecto para tu vida fitness</Text>
         <TextInput
           style={styles.txtCorreoElectronico}
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     height: 250,
     width: 250,
     marginTop: -50,
-    alignItems: 'center',
+    marginLeft: 18,
   },
   txtBienvenida: {
     fontSize: 18,
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   },
   txtCorreoElectronico: {
     backgroundColor: 'transparent',
-    width: 225,
+    width: 280,
     height: 43,
     fontSize: 20,
     color: 'white',
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   },
   txtContrasena: {
     backgroundColor: 'transparent',
-    width: 225,
+    width: 280,
     height: 43,
     fontSize: 20,
     color: 'white',
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderRadius: 20,
     paddingVertical: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
     marginTop: 20,
   },
   googleLogo: {
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     marginTop: 30,
-    marginRight: 120,
+    marginRight: 110,
   },
   txtRegistrate: {
     color: 'white',
