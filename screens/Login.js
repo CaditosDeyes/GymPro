@@ -1,35 +1,24 @@
 import { useState } from 'react';
 import React from 'react';
 import { View, Text, ImageBackground, Image, Alert, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import appFirebase from '../Firebase';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+const auth = getAuth(appFirebase)
 
-const Inicio = () => {
-  const [correoElectronico, setCorreoElectronico] = useState('');
-  const [contrasena, setContrasena] = useState('');
+const Login = (props) => {
+  const [correoElectronico, setCorreoElectronico] = useState()
+  const [contrasena, setContrasena] = useState()
 
-  const handleLogin = () => {
-    // Aquí puedes agregar la lógica para manejar el inicio de sesión
-    if (correoElectronico === '' || contrasena === '') {
-      Alert.alert('Error', 'Por favor, ingrese su correo electrónico y contraseña.');
-    } else {
-      Alert.alert('Éxito', 'Has iniciado sesión con éxito.');
-      // Aquí puedes agregar la lógica para redirigir al usuario a otra pantalla
+  const SignIn = async()=>{
+    try {
+      await signInWithEmailAndPassword(auth,correoElectronico,contrasena)
+      Alert.alert("Iniciando sesión","Accediendo...")
+      props.navigation.navigate('Home')
+    } catch (error) {
+      console.log(error);
+      
     }
-  };
-
-  const handleLoginGoogle = () => {
-    // Aquí puedes agregar la lógica para manejar el inicio de sesión con Google
-    Alert.alert('Éxito', 'Inicio de sesión con Google realizado');
-  };
-
-  const handleLoginFacebook = () => {
-    // Aquí puedes agregar la lógica para manejar el inicio de sesión con Google
-    Alert.alert('Éxito', 'Inicio de sesión con Facebook realizado');
-  };
-
-  const handleRegistro = () => {
-    // Aquí puedes agregar la lógica para el registro
-    Alert.alert('Registro', 'Redirigir al usuario a la página de registro');
-  };
+  }
 
   return (
     <ImageBackground source={require('../img/background_image.jpg')} style={styles.background}>
@@ -41,7 +30,7 @@ const Inicio = () => {
           placeholder="Correo Electrónico"
           placeholderTextColor={'white'}
           value={correoElectronico}
-          onChangeText={setCorreoElectronico}
+          onChangeText={(text)=>setCorreoElectronico(text)}
         />
         <TextInput
           style={styles.txtContrasena}
@@ -49,22 +38,22 @@ const Inicio = () => {
           placeholderTextColor={'white'}
           secureTextEntry={true}
           value={contrasena}
-          onChangeText={setContrasena}
+          onChangeText={(text)=>setContrasena(text)}
         />
-        <TouchableOpacity style={styles.btnIniciarSesion} onPress={handleLogin}>
+        <TouchableOpacity style={styles.btnIniciarSesion} onPress={SignIn}>
           <Text style={styles.txtBtnIniciarSesion}>Iniciar Sesión</Text>
         </TouchableOpacity>
         <Text style={styles.txtAccesoRapido}>Acceso Rápido</Text>
-        <TouchableOpacity style={styles.btnGoogle} onPress={handleLoginGoogle}>
+        <TouchableOpacity style={styles.btnGoogle}>
           <Image source={require('../img/googleLogo.png')} style={styles.googleLogo} />
           <Text style={styles.txtAccesoGoogle}>Continuar Con Google</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.btnFacebook} onPress={handleLoginFacebook}>
+        <TouchableOpacity style={styles.btnFacebook}>
           <Image source={require('../img/facebookLogo.png')} style={styles.facebookLogo} />
           <Text style={styles.txtAccesoFacebook}>Continuar Con Facebook</Text>
         </TouchableOpacity>
         <Text style={styles.txtCuenta}>¿No tienes una cuenta?</Text>
-        <TouchableOpacity onPress={handleRegistro}>
+        <TouchableOpacity>
           <Text style={[styles.txtRegistrate]}>Registrate</Text>
         </TouchableOpacity>
       </View>
@@ -197,4 +186,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Inicio;
+export default Login;
