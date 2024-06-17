@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ImageBackground, Image, Alert, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import appFirebase from '../Firebase';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
@@ -18,6 +17,10 @@ const Login = (props) => {
       console.log(error);
       
     }
+  }
+
+  const SignUp = () => {
+    props.navigation.navigate('Registro');
   }
 
   return (
@@ -53,7 +56,7 @@ const Login = (props) => {
           <Text style={styles.txtAccesoFacebook}>Continuar Con Facebook</Text>
         </TouchableOpacity>
         <Text style={styles.txtCuenta}>¿No tienes una cuenta?</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={SignUp}>
           <Text style={[styles.txtRegistrate]}>Registrate</Text>
         </TouchableOpacity>
       </View>
@@ -111,7 +114,7 @@ const styles = StyleSheet.create({
   btnIniciarSesion: {
     width: 280,
     height: 43,
-    backgroundColor: 'transparent',
+    backgroundColor: 'orange',
     paddingVertical: 10,
     paddingHorizontal: 25,
     borderColor: 'white',
