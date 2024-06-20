@@ -3,11 +3,12 @@ import { View, Text, TextInput, ImageBackground, StyleSheet, Image, TouchableOpa
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../Firebase';
+import { auth, db } from '../Firebase';
+import { addDoc, collection } from 'firebase/firestore';
 
 const Registro = ({navigation}) => {
-  //const [nombre, setNombre] = useState('');
-  //const [apellido, setApellido] = useState('');
+  const [nombre, setNombre] = useState('');
+  const [apellido, setApellido] = useState('');
   const [correoElectronico, setCorreoElectronico] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [loading, setLoading] = useState(false);
@@ -16,13 +17,20 @@ const Registro = ({navigation}) => {
   const handleSignUp = async () => {
     setLoading(true);
     try {
-      const userCredentials =await createUserWithEmailAndPassword(auth, correoElectronico, contrasena);
+      const userCredentials = await createUserWithEmailAndPassword(auth, correoElectronico, contrasena);
       const user = userCredentials.user;
-      console.log("Registrado con :", user.correoElectronico);
-      Alert.alert("Registro exitoso", "Usuario ${user.correoElectronico} registrado correctamente");
+
+      // Guardar la información adicional del usuario en Firestore
+      await addDoc(collection(db, 'usuarios'), {
+        uid: user.uid,
+        nombre: nombre,
+        apellido: apellido,
+        correoElectronico: correoElectronico,
+      });
+
+      Alert.alert("Registro exitoso", "Usuario registrado correctamente");
       navigation.navigate('Inicio');
     } catch (error) {
-      console.error("Error al registrar:", error.message);
       Alert.alert("Error al registrar:", error.message);
     } finally {
       setLoading(false);
@@ -38,7 +46,20 @@ const Registro = ({navigation}) => {
     <View style={styles.container}>
       <Image source={require('../img/gymProLogo.png')} style={styles.logoImage}/>
       <Text style={styles.txtRegistrate}>Registrate</Text>
-      
+      <TextInput
+          style={styles.txtNombre}
+          placeholder="Nombre"
+          placeholderTextColor={'white'}
+          value={nombre}
+          onChangeText={setNombre}
+        />
+        <TextInput
+          style={styles.txtApellido}
+          placeholder="Apellido"
+          placeholderTextColor={'white'}
+          value={apellido}
+          onChangeText={setApellido}
+        />
       <TextInput
         style={styles.txtCorreoElectronico}
         placeholder="Correo Electrónico"
