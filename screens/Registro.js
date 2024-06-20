@@ -1,26 +1,36 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, ImageBackground, StyleSheet, Image, Touchable, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, ImageBackground, StyleSheet, Image, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../Firebase';
 
-const Registro = (props) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const Registro = ({navigation}) => {
+  //const [nombre, setNombre] = useState('');
+  //const [apellido, setApellido] = useState('');
+  const [correoElectronico, setCorreoElectronico] = useState('');
+  const [contrasena, setContrasena] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSignUp = () => {
-    // Aquí va la lógica para registrar al usuario con Firebase
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-      .then((userCredentials) => {
-        const user = userCredentials.user;
-        console.log('Registrado con:', user.email);
-      })
-      .catch((error) => {
-        console.error('Error al registrar:', error.message);
-      });
+
+  const handleSignUp = async () => {
+    setLoading(true);
+    try {
+      const userCredentials =await createUserWithEmailAndPassword(auth, correoElectronico, contrasena);
+      const user = userCredentials.user;
+      console.log("Registrado con :", user.correoElectronico);
+      Alert.alert("Registro exitoso", "Usuario ${user.correoElectronico} registrado correctamente");
+      navigation.navigate('Inicio');
+    } catch (error) {
+      console.error("Error al registrar:", error.message);
+      Alert.alert("Error al registrar:", error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const SignIn = () => {
-    props.navigation.navigate('Login');
+    navigation.navigate('Login');
   }
 
   return (
@@ -28,30 +38,25 @@ const Registro = (props) => {
     <View style={styles.container}>
       <Image source={require('../img/gymProLogo.png')} style={styles.logoImage}/>
       <Text style={styles.txtRegistrate}>Registrate</Text>
-      <TextInput
-      style={styles.txtNombre}
-      placeholder="Nombre"
-      placeholderTextColor={'white'}
-      />
-      <TextInput
-      style={styles.txtApellido}
-      placeholder="Apellido"
-      placeholderTextColor={'white'}
-      />
+      
       <TextInput
         style={styles.txtCorreoElectronico}
         placeholder="Correo Electrónico"
         placeholderTextColor={'white'}
+        value={correoElectronico}
+        onChangeText={setCorreoElectronico}
       />
       <TextInput
         style={styles.txtContrasena}
         placeholder="Contraseña"
         placeholderTextColor={'white'}
         secureTextEntry={true}
+        value={contrasena}
+        onChangeText={setContrasena}
       />
-      <TouchableOpacity style={styles.btnRegistrarse}>
-        <Text style={styles.txtBtnRegistrarse}>Registrarse</Text>
-      </TouchableOpacity>
+      <TouchableOpacity style={styles.btnRegistrarse} onPress={handleSignUp} disabled={loading}>
+          {loading ? <ActivityIndicator color="white" /> : <Text style={styles.txtBtnRegistrarse}>Registrarse</Text>}
+        </TouchableOpacity>
       <Text style={styles.txtCuenta}>¿Ya tienes una cuenta?</Text>
       <TouchableOpacity onPress={SignIn}>
         <Text style={[styles.txtIniciaSesion]}>Inicia Sesión</Text>

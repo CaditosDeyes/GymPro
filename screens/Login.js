@@ -1,26 +1,28 @@
 import React, { useState } from 'react';
-import { View, Text, ImageBackground, Image, Alert, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ImageBackground, Image, Alert, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import appFirebase from '../Firebase';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 const auth = getAuth(appFirebase)
 
-const Login = (props) => {
+const Login = ({navigation}) => {
   const [correoElectronico, setCorreoElectronico] = useState()
   const [contrasena, setContrasena] = useState()
+  const [loading, setLoading] = useState()
 
   const SignIn = async()=>{
+    setLoading(true);
     try {
       await signInWithEmailAndPassword(auth,correoElectronico,contrasena)
-      Alert.alert("Iniciando sesión","Accediendo...")
-      props.navigation.navigate('Home')
+      navigation.navigate('Inicio')
     } catch (error) {
       console.log(error);
-      
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   const SignUp = () => {
-    props.navigation.navigate('Registro');
+    navigation.navigate('Registro');
   }
 
   return (
@@ -43,8 +45,8 @@ const Login = (props) => {
           value={contrasena}
           onChangeText={(text)=>setContrasena(text)}
         />
-        <TouchableOpacity style={styles.btnIniciarSesion} onPress={SignIn}>
-          <Text style={styles.txtBtnIniciarSesion}>Iniciar Sesión</Text>
+        <TouchableOpacity style={styles.btnIniciarSesion} onPress={SignIn} disabled={loading}>
+          {loading ? <ActivityIndicator color="white" /> : <Text style={styles.txtBtnIniciarSesion}>Iniciar Sesión</Text>}
         </TouchableOpacity>
         <Text style={styles.txtAccesoRapido}>Acceso Rápido</Text>
         <TouchableOpacity style={styles.btnGoogle}>
