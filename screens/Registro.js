@@ -13,7 +13,6 @@ const Registro = ({navigation}) => {
   const [contrasena, setContrasena] = useState('');
   const [loading, setLoading] = useState(false);
 
-
   const handleSignUp = async () => {
     setLoading(true);
     try {
