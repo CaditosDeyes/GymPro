@@ -1,19 +1,31 @@
 import React, { useState } from 'react';
 import { View, Text, ImageBackground, Image, Alert, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
+//import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import appFirebase from '../Firebase';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-const auth = getAuth(appFirebase)
+import CheckBox from '@react-native-community/checkbox';
+//import Icon from 'react-native-vector-icons/FontAwesome';
+//import Icon from 'react-native-vector-icons/Entypo';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const Login = ({navigation}) => {
-  const [correoElectronico, setCorreoElectronico] = useState()
-  const [contrasena, setContrasena] = useState()
-  const [loading, setLoading] = useState()
+const auth = getAuth(appFirebase);
 
-  const SignIn = async()=>{
+const Login = ({ navigation }) => {
+  const [correoElectronico, setCorreoElectronico] = useState();
+  const [contrasena, setContrasena] = useState();
+  const [loading, setLoading] = useState(false);
+
+  const SignIn = async () => {
+    if(!correoElectronico || !contrasena) {
+      Alert.alert('Error', 'Por favor, llena todos los campos');
+      return;
+    }
+
+    
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth,correoElectronico,contrasena)
-      navigation.navigate('Inicio')
+      await signInWithEmailAndPassword(auth, correoElectronico, contrasena);
+      navigation.navigate('Inicio');
     } catch (error) {
       console.log(error);
     } finally {
@@ -21,9 +33,28 @@ const Login = ({navigation}) => {
     }
   };
 
+  const [showContrasena, setshowContrasena] = useState(false);
+
+
+  /*const SignInWithGoogle = async () => {
+    setLoading(true);
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      const googleCredential = GoogleAuthProvider.credential(userInfo.idToken);
+      await signInWithPopup(auth, googleCredential); // Usar signInWithPopup en lugar de signInWithCredential
+      navigation.navigate('Inicio');
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };*/
+  
+
   const SignUp = () => {
     navigation.navigate('Registro');
-  }
+  };
 
   return (
     <ImageBackground source={require('../img/background_image.jpg')} style={styles.background}>
@@ -35,28 +66,31 @@ const Login = ({navigation}) => {
           placeholder="Correo Electrónico"
           placeholderTextColor={'white'}
           value={correoElectronico}
-          onChangeText={(text)=>setCorreoElectronico(text)}
+          onChangeText={(text) => setCorreoElectronico(text)}
         />
-        <TextInput
-          style={styles.txtContrasena}
-          placeholder="Contraseña"
-          placeholderTextColor={'white'}
-          secureTextEntry={true}
-          value={contrasena}
-          onChangeText={(text)=>setContrasena(text)}
-        />
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.txtContrasena}
+              placeholder="Contraseña"
+              placeholderTextColor={'white'}
+              secureTextEntry={!showContrasena} // Alternar visibilidad
+              value={contrasena}
+              onChangeText={(text) => setContrasena(text)}
+            />
+            <TouchableOpacity style={styles.iconEye} onPress={() => setshowContrasena(!showContrasena)}>
+              <Icon name={showContrasena ? "visibility-off" : "visibility"} size={24} color="white" />
+            </TouchableOpacity>
+          </View>
         <TouchableOpacity style={styles.btnIniciarSesion} onPress={SignIn} disabled={loading}>
           {loading ? <ActivityIndicator color="white" /> : <Text style={styles.txtBtnIniciarSesion}>Iniciar Sesión</Text>}
         </TouchableOpacity>
+        {/*
         <Text style={styles.txtAccesoRapido}>Acceso Rápido</Text>
-        <TouchableOpacity style={styles.btnGoogle}>
+        <TouchableOpacity style={styles.btnGoogle} onPress={SignInWithGoogle} disabled={loading}>
           <Image source={require('../img/googleLogo.png')} style={styles.googleLogo} />
           <Text style={styles.txtAccesoGoogle}>Continuar Con Google</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.btnFacebook}>
-          <Image source={require('../img/facebookLogo.png')} style={styles.facebookLogo} />
-          <Text style={styles.txtAccesoFacebook}>Continuar Con Facebook</Text>
-        </TouchableOpacity>
+        */}
         <Text style={styles.txtCuenta}>¿No tienes una cuenta?</Text>
         <TouchableOpacity onPress={SignUp}>
           <Text style={[styles.txtRegistrate]}>Registrate</Text>
@@ -100,6 +134,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginTop: 20,
   },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    //borderWidth: 1,
+    borderColor: 'white',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginVertical: 10,
+    marginLeft: 30,
+  },
   txtContrasena: {
     backgroundColor: 'transparent',
     width: 280,
@@ -112,6 +157,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 10,
     marginTop: 20,
+  },
+  iconEye: {
+    marginTop: 15,
+    marginLeft: 10,
   },
   btnIniciarSesion: {
     width: 280,

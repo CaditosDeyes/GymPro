@@ -14,6 +14,24 @@ const Registro = ({navigation}) => {
   const [loading, setLoading] = useState(false);
 
   const handleSignUp = async () => {
+    if(!nombre || !apellido || !correoElectronico || !contrasena) {
+      Alert.alert('Error', 'Por favor, llena todos los campos');
+      return;
+    }
+
+    //Validación de formato de correo electronico
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!emailRegex.test(correoElectronico)){
+      Alert.alert('Error', 'Por favor, ingresa un correo electronico valido');
+      return;
+    }
+
+    //Validacion de longitud de contraseña
+    if(contrasena.length < 6){
+      Alert.alert("Error", "La contraseña debe tener al menos 6 caracteres");
+      return;
+    }
+    
     setLoading(true);
     try {
       const userCredentials = await createUserWithEmailAndPassword(auth, correoElectronico, contrasena);

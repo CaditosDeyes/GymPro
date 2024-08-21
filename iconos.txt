@@ -1,0 +1,6 @@
+https://github.com/oblador/react-native-vector-icons
+
+En android studio en en el gradle scripts colocar
+abrir el build gradle(module app)
+Y al final lo agregamos y damos Sync Now
+apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
