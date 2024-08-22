@@ -5,6 +5,7 @@ import 'firebase/auth';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../Firebase';
 import { addDoc, collection } from 'firebase/firestore';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Registro = ({navigation}) => {
   const [nombre, setNombre] = useState('');
@@ -15,14 +16,14 @@ const Registro = ({navigation}) => {
 
   const handleSignUp = async () => {
     if(!nombre || !apellido || !correoElectronico || !contrasena) {
-      Alert.alert('Error', 'Por favor, llena todos los campos');
+      Alert.alert("Error", "Por favor, llena todos los campos");
       return;
     }
 
     //Validación de formato de correo electronico
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if(!emailRegex.test(correoElectronico)){
-      Alert.alert('Error', 'Por favor, ingresa un correo electronico valido');
+      Alert.alert("Error", "Por favor, ingresa un correo electronico valido");
       return;
     }
 
@@ -54,6 +55,8 @@ const Registro = ({navigation}) => {
     }
   };
 
+  const [showContrasena, setshowContrasena] = useState(false);
+
   const SignIn = () => {
     navigation.navigate('Login');
   }
@@ -84,14 +87,19 @@ const Registro = ({navigation}) => {
         value={correoElectronico}
         onChangeText={setCorreoElectronico}
       />
-      <TextInput
-        style={styles.txtContrasena}
-        placeholder="Contraseña"
-        placeholderTextColor={'white'}
-        secureTextEntry={true}
-        value={contrasena}
-        onChangeText={setContrasena}
-      />
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={styles.txtContrasena}
+          placeholder="Contraseña"
+          placeholderTextColor={'white'}
+          secureTextEntry={!showContrasena} // Alternar visibilidad
+          value={contrasena}
+          onChangeText={(text) => setContrasena(text)}
+        />
+        <TouchableOpacity style={styles.iconEye} onPress={() => setshowContrasena(!showContrasena)}>
+          <Icon name={showContrasena ? "visibility-off" : "visibility"} size={24} color="white" />
+        </TouchableOpacity>
+      </View>
       <TouchableOpacity style={styles.btnRegistrarse} onPress={handleSignUp} disabled={loading}>
           {loading ? <ActivityIndicator color="white" /> : <Text style={styles.txtBtnRegistrarse}>Registrarse</Text>}
         </TouchableOpacity>
@@ -164,6 +172,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginTop: 20,
   },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderColor: 'white',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+    marginLeft: 30,
+  },
   txtContrasena: {
     backgroundColor: 'transparent',
     width: 280,
@@ -176,6 +193,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 10,
     marginTop: 20,
+  },
+  iconEye: {
+    marginTop: 15,
+    marginLeft: 10,
   },
   btnRegistrarse: {
     width: 280,

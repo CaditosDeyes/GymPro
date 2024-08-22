@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, ImageBackground, Image, Alert, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
-import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
-//import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { getAuth,signInWithEmailAndPassword } from 'firebase/auth';
 import appFirebase from '../Firebase';
-import CheckBox from '@react-native-community/checkbox';
-//import Icon from 'react-native-vector-icons/FontAwesome';
-//import Icon from 'react-native-vector-icons/Entypo';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const auth = getAuth(appFirebase);
@@ -17,40 +13,22 @@ const Login = ({ navigation }) => {
 
   const SignIn = async () => {
     if(!correoElectronico || !contrasena) {
-      Alert.alert('Error', 'Por favor, llena todos los campos');
+      Alert.alert("Error", "Por favor, llena todos los campos");
       return;
     }
-
     
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, correoElectronico, contrasena);
       navigation.navigate('Inicio');
     } catch (error) {
-      console.log(error);
+      Alert.alert("Usuario no encontrado", "Por favor, Verifica tus credenciales");
     } finally {
       setLoading(false);
     }
   };
 
   const [showContrasena, setshowContrasena] = useState(false);
-
-
-  /*const SignInWithGoogle = async () => {
-    setLoading(true);
-    try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      const googleCredential = GoogleAuthProvider.credential(userInfo.idToken);
-      await signInWithPopup(auth, googleCredential); // Usar signInWithPopup en lugar de signInWithCredential
-      navigation.navigate('Inicio');
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };*/
-  
 
   const SignUp = () => {
     navigation.navigate('Registro');
@@ -67,6 +45,7 @@ const Login = ({ navigation }) => {
           placeholderTextColor={'white'}
           value={correoElectronico}
           onChangeText={(text) => setCorreoElectronico(text)}
+          selectionColor="orange"
         />
           <View style={styles.passwordContainer}>
             <TextInput
@@ -76,6 +55,7 @@ const Login = ({ navigation }) => {
               secureTextEntry={!showContrasena} // Alternar visibilidad
               value={contrasena}
               onChangeText={(text) => setContrasena(text)}
+              selectionColor="orange"
             />
             <TouchableOpacity style={styles.iconEye} onPress={() => setshowContrasena(!showContrasena)}>
               <Icon name={showContrasena ? "visibility-off" : "visibility"} size={24} color="white" />
@@ -84,13 +64,6 @@ const Login = ({ navigation }) => {
         <TouchableOpacity style={styles.btnIniciarSesion} onPress={SignIn} disabled={loading}>
           {loading ? <ActivityIndicator color="white" /> : <Text style={styles.txtBtnIniciarSesion}>Iniciar Sesión</Text>}
         </TouchableOpacity>
-        {/*
-        <Text style={styles.txtAccesoRapido}>Acceso Rápido</Text>
-        <TouchableOpacity style={styles.btnGoogle} onPress={SignInWithGoogle} disabled={loading}>
-          <Image source={require('../img/googleLogo.png')} style={styles.googleLogo} />
-          <Text style={styles.txtAccesoGoogle}>Continuar Con Google</Text>
-        </TouchableOpacity>
-        */}
         <Text style={styles.txtCuenta}>¿No tienes una cuenta?</Text>
         <TouchableOpacity onPress={SignUp}>
           <Text style={[styles.txtRegistrate]}>Registrate</Text>
@@ -105,6 +78,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    padding: '4%',
   },
   background: {
     flex: 1,
@@ -112,7 +86,7 @@ const styles = StyleSheet.create({
   logoImage: {
     height: 250,
     width: 250,
-    marginTop: -50,
+    marginTop: -200,
     marginLeft: 18,
   },
   txtBienvenida: {
@@ -137,11 +111,9 @@ const styles = StyleSheet.create({
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    //borderWidth: 1,
     borderColor: 'white',
     borderRadius: 5,
     paddingHorizontal: 10,
-    paddingVertical: 5,
     marginVertical: 10,
     marginLeft: 30,
   },
@@ -178,52 +150,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     marginTop: -4,
-  },
-  txtAccesoRapido: {
-    fontSize: 20,
-    color: 'white',
-    marginTop: 40,
-    textAlign: 'center',
-  },
-  btnGoogle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-    borderColor: 'white',
-    borderWidth: 0.5,
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginTop: 20,
-  },
-  googleLogo: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
-  },
-  txtAccesoGoogle: {
-    color: 'white',
-    fontSize: 20,
-  },
-  btnFacebook: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-    borderColor: 'white',
-    borderWidth: 0.5,
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    marginTop: 20,
-  },
-  facebookLogo: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
-  },
-  txtAccesoFacebook: {
-    color: 'white',
-    fontSize: 20,
   },
   txtCuenta: {
     color: 'white',
