@@ -1,23 +1,16 @@
-import React, { View, Text } from 'react-native';
+import React from 'react';
+import { View, Text, Button } from 'react-native';
 
-const Inicio = () => {
+const Inicio = ({ navigation }) => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.logoText}>GymPro</Text>
+    <View>
+      <Text>Inicio</Text>
+      <Button
+        title="Ir a Comunidad"
+        onPress={() => navigation.navigate('Comunidad')}
+      />
     </View>
   );
-};
-
-const styles = {
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logoText: {
-    fontSize: 30,
-    fontWeight: 'bold',
-  },
 };
 
 export default Inicio;
