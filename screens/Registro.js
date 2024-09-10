@@ -6,6 +6,7 @@ import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../Firebase';
 import { addDoc, collection } from 'firebase/firestore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 
 const Registro = ({navigation}) => {
   const [nombre, setNombre] = useState('');
@@ -16,20 +17,35 @@ const Registro = ({navigation}) => {
 
   const handleSignUp = async () => {
     if(!nombre || !apellido || !correoElectronico || !contrasena) {
-      Alert.alert("Error", "Por favor, llena todos los campos");
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Error',
+        textBody: 'Por favor, llena todos los campos',
+        button: 'Cerrar'
+      });
       return;
     }
 
     //Validación de formato de correo electronico
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if(!emailRegex.test(correoElectronico)){
-      Alert.alert("Error", "Por favor, ingresa un correo electronico valido");
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Error',
+        textBody: 'Por favor, ingresa un formato de correo electronico valido',
+        button: 'Cerrar'
+      });
       return;
     }
 
     //Validacion de longitud de contraseña
     if(contrasena.length < 6){
-      Alert.alert("Error", "La contraseña debe tener al menos 6 caracteres");
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Error',
+        textBody: 'La contraseña debe tener al menos 6 caracteres',
+        button: 'Cerrar'
+      });
       return;
     }
     
@@ -46,10 +62,21 @@ const Registro = ({navigation}) => {
         correoElectronico: correoElectronico,
       });
 
-      Alert.alert("Registro exitoso", "Usuario registrado correctamente");
+      Dialog.show({
+        type: ALERT_TYPE.SUCCESS,
+        title: 'Registro exitoso',
+        textBody: 'Usuario registrado correctamente',
+        button: 'Continuar'
+      });
       navigation.navigate('Inicio');
     } catch (error) {
-      Alert.alert("Error al registrar:", error.message);
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Error',
+        textBody: 'Error al registrar al usuario',
+        button: 'Cerrar'
+      });
+      return;
     } finally {
       setLoading(false);
     }
