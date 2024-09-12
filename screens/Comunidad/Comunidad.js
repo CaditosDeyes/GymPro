@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { ImageBackground, StyleSheet, Text, View, FlatList, TextInput, TouchableOpacity, Image, KeyboardAvoidingView } from 'react-native';
 import Post from './Post';
 import * as ImagePicker from 'react-native-image-picker';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon2 from 'react-native-vector-icons/FontAwesome5';
 
 const Comunidad = () => {
     const [posts, setPosts] = useState([]);
@@ -26,11 +28,11 @@ const Comunidad = () => {
     };
 
     return (
-        <ImageBackground source={require('../img/background_image.jpg')} style={styles.background}>
+        <ImageBackground source={require('./img/background_image.jpg')} style={styles.background}>
             <KeyboardAvoidingView style={styles.container} behavior="padding">
                 <View style={styles.userContainer}>
-                    <Image source={require('../img/user.png')} style={styles.userIcon} />
-                    <Text style={styles.userName}>Usuario</Text>
+                    <Icon name="account-circle" size={40} color="white"/>
+                    <Text style={styles.userName}>  Usuario</Text>
                 </View>
                 <View style={styles.postInputContainer}>
                     <View style={styles.inputAndButtonContainer}>
@@ -51,12 +53,12 @@ const Comunidad = () => {
                     )}
                     <View style={styles.attachmentButtons}>
                         <TouchableOpacity style={styles.attachmentButton} onPress={selectImage}>
-                            <Image source={require('../img/image.png')} style={styles.attachmentIcon} />
+                            <Icon name="add-photo-alternate" size={20} color="white"/>
                             <Text style={styles.attachmentButtonText}>Adjuntar imagen</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.attachmentButton} onPress={() => { /* lógica para adjuntar video */ }}>
-                            <Image source={require('../img/video.png')} style={styles.attachmentIcon} />
-                            <Text style={styles.attachmentButtonText}>Adjuntar video</Text>
+                            <Icon name="videocam" size={20} color="white"/>
+                            <Text style={styles.attachmentButtonText}> Adjuntar video</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
