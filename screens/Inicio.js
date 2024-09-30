@@ -1,14 +1,53 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Button, ImageBackground, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Card, ProgressBar, IconButton } from 'react-native-paper';
+import { Card, ProgressBar} from 'react-native-paper';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db, auth } from '../Firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 const Inicio = ({ navigation }) => {
+  const [nombreUsuario, setNombreUsuario] = useState('Usuario');
+
+  const obtenerNombreUsuarioPorUID = async (uid) => {
+    try {
+      const q = query(collection(db, 'usuarios'), where('uid', '==', uid));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        querySnapshot.forEach((doc) => {
+          const nombre = doc.data().nombre;
+          setNombreUsuario(nombre);
+        });
+      } else {
+        console.log('No se encontró el usuario');
+      }
+    } catch (error) {
+      console.error('Error al obtener el nombre del usuario:', error);
+    }
+  };
+
+  useEffect(() => {
+    // Verifica si el usuario está autenticado
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Si el usuario está autenticado, obtiene su uid
+        const uid = user.uid;
+        obtenerNombreUsuarioPorUID(uid); // Realiza la búsqueda del usuario en Firestore
+      } else {
+        console.log('No hay ningún usuario autenticado');
+      }
+    });
+
+    // Limpia el listener de Firebase cuando el componente se desmonte
+    return () => unsubscribe();
+  }, []);
+  
   return (
     <ImageBackground source={require('../img/background_image.jpg')} style={styles.background}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.txtSaludo}>Hola, Usuario!</Text>
+          <Text style={styles.txtSaludo}>Hola, {nombreUsuario}!</Text>
           <Icon name="menu" size={30} style={styles.iconMenu} />
         </View>
         
