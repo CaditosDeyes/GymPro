@@ -1,10 +1,9 @@
-// en Comunidad.js
 import React, { useState } from 'react';
-import { ImageBackground, StyleSheet, Text, View, FlatList, TextInput, TouchableOpacity, Image, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TextInput, TouchableOpacity, Image, KeyboardAvoidingView } from 'react-native';
 import Post from './Post';
 import * as ImagePicker from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import Icon2 from 'react-native-vector-icons/FontAwesome5';
+import Background from '../../hooks/ImageBackground';
 
 const Comunidad = () => {
     const [posts, setPosts] = useState([]);
@@ -28,7 +27,7 @@ const Comunidad = () => {
     };
 
     return (
-        <ImageBackground source={require('./img/background_image.jpg')} style={styles.background}>
+        <Background>
             <KeyboardAvoidingView style={styles.container} behavior="padding">
                 <View style={styles.userContainer}>
                     <Icon name="account-circle" size={40} color="white"/>
@@ -68,7 +67,7 @@ const Comunidad = () => {
                     keyExtractor={item => item.id}
                 />
             </KeyboardAvoidingView>
-        </ImageBackground>
+        </Background>
     );
 };
 
