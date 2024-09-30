@@ -3,6 +3,7 @@ import { View, Text, Button, ImageBackground, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Card, ProgressBar} from 'react-native-paper';
 import useNombreUsuario from '../hooks/ObtenerNombreUsuario';
+import Background from '../hooks/ImageBackground';
 
 
 const Inicio = ({ navigation }) => {
@@ -13,7 +14,7 @@ const Inicio = ({ navigation }) => {
   }
   
   return (
-    <ImageBackground source={require('../img/background_image.jpg')} style={styles.background}>
+    <Background>
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.txtSaludo}>Hola, {nombreUsuario}!</Text>
@@ -63,7 +64,7 @@ const Inicio = ({ navigation }) => {
           onPress={() => navigation.navigate('Calendario')}
           />
       </View>
-    </ImageBackground>
+    </Background>
   );
 };
 
