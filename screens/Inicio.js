@@ -46,10 +46,14 @@ const Inicio = ({ navigation }) => {
             <Icon name="add-circle" size={60} style={styles.iconAdd}></Icon>
           </Card.Content>
         </Card>
-        {/*<Button
+        <Button
           title="Ir a Comunidad"
           onPress={() => navigation.navigate('Comunidad')}
-        />*/}
+        />
+        <Button
+          title="Ir a Calendario"
+          onPress={() => navigation.navigate('Calendario')}
+          />
       </View>
     </ImageBackground>
   );
