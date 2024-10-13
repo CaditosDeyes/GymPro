@@ -1,18 +1,13 @@
 import React from 'react';
-import { View, Text, Button, ImageBackground, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Card, ProgressBar} from 'react-native-paper';
 import useNombreUsuario from '../hooks/ObtenerNombreUsuario';
 import Background from '../hooks/ImageBackground';
 
-
 const Inicio = ({ navigation }) => {
-  const {nombreUsuario, loading} = useNombreUsuario();
-  
-  if(loading) {
-    return <Text>Cargando...</Text>
-  }
-  
+  const {nombreUsuario} = useNombreUsuario();
+
   return (
     <Background>
       <View style={styles.container}>

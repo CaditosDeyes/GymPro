@@ -6,6 +6,7 @@ import REGISTRO from './screens/Registro';
 import INICIO from './screens/Inicio';
 import COMUNIDAD from './screens/Comunidad/Comunidad';
 import Calendario from './screens/Calendario';
+import ESTADO_FISICO from './screens/EstadoFisico';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,6 +17,7 @@ const Navegacion = () => {
             <Stack.Navigator>
                 <Stack.Screen name="Login" component={LOGIN} options={{ headerShown: false }} />
                 <Stack.Screen name="Registro" component={REGISTRO} options={{ headerShown: false }} />
+                <Stack.Screen name="EstadoFisico" component={ESTADO_FISICO} options={{headerShown: false}} />
                 <Stack.Screen name="Inicio" component={INICIO} options={{ headerShown: false }} />
                 <Stack.Screen name="Comunidad" component={COMUNIDAD} options={{ headerShown: false }} />
                 <Stack.Screen name="Calendario" component={Calendario} options={{ headerShown: false }} />

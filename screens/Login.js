@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, ImageBackground, Image, Alert, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, ImageBackground, Image, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { getAuth,signInWithEmailAndPassword } from 'firebase/auth';
 import appFirebase from '../Firebase';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot} from 'react-native-alert-notification';
+import Background from '../hooks/ImageBackground';
 
 const auth = getAuth(appFirebase);
 
@@ -47,7 +48,7 @@ const Login = ({ navigation }) => {
 
   return (
     <AlertNotificationRoot>
-      <ImageBackground source={require('../img/background_image.jpg')} style={styles.background}>
+      <Background>
         <View style={styles.container}>
           <Image source={require('../img/gymProLogo.png')} style={styles.logoImage} />
           <Text style={styles.txtBienvenida}>El acompañante perfecto para tu vida fitness</Text>
@@ -81,7 +82,7 @@ const Login = ({ navigation }) => {
             <Text style={[styles.txtRegistrate]}>Registrate</Text>
           </TouchableOpacity>
         </View>
-      </ImageBackground>
+      </Background>
     </AlertNotificationRoot>
   );
 };
@@ -92,9 +93,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: '4%',
-  },
-  background: {
-    flex: 1,
   },
   logoImage: {
     height: 250,

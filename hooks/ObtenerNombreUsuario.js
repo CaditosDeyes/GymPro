@@ -5,7 +5,7 @@ import { auth, db } from '../Firebase';
 
 const useNombreUsuario = () => {
     const [nombreUsuario, setNombreUsuario] = useState('Usuario');
-    const [loading, setLoading] = useState(true); // Para controlar el estado de carga
+    // const [loading, setLoading] = useState(true); // Para controlar el estado de carga
   
     const obtenerNombreUsuarioPorUID = async (uid) => {
       try {
@@ -23,7 +23,7 @@ const useNombreUsuario = () => {
       } catch (error) {
         console.error('Error al obtener el nombre del usuario:', error);
       } finally {
-        setLoading(false); // Finaliza el estado de carga
+        // setLoading(false); // Finaliza el estado de carga
       }
     };
   
@@ -34,14 +34,14 @@ const useNombreUsuario = () => {
           obtenerNombreUsuarioPorUID(uid);
         } else {
           console.log('No hay ningún usuario autenticado');
-          setLoading(false); // Finaliza el estado de carga si no hay usuario autenticado
+          // setLoading(false); // Finaliza el estado de carga si no hay usuario autenticado
         }
       });
   
       return () => unsubscribe();
     }, []);
   
-    return { nombreUsuario, loading };
+    return { nombreUsuario };
   };
   
   export default useNombreUsuario;
