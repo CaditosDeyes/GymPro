@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth, db } from '../Firebase';
-import { addDoc, collection } from 'firebase/firestore';
+import { auth} from '../Firebase';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { ALERT_TYPE, Dialog } from 'react-native-alert-notification';
 import Background from '../hooks/ImageBackground';

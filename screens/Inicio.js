@@ -1,12 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Card, ProgressBar} from 'react-native-paper';
+import { Card, ProgressBar } from 'react-native-paper';
 import useNombreUsuario from '../hooks/ObtenerNombreUsuario';
 import Background from '../hooks/ImageBackground';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../Firebase';
+import { Picker } from '@react-native-picker/picker'; // Importación correcta
 
 const Inicio = ({ navigation }) => {
-  const {nombreUsuario} = useNombreUsuario();
+  const { nombreUsuario } = useNombreUsuario();
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('Pierna'); // Inicializar con una categoría existente
+  const [ejercicios, setEjercicios] = useState([]);
+  const [nombreCategoria, setNombreCategoria] = useState('');
+
+  // Obtener ejercicios según la categoría seleccionada
+  useEffect(() => {
+    const cargarEjercicios = async () => {
+      try {
+        // Ruta de la subcolección correspondiente
+        const ejerciciosRef = collection(
+          db,
+          'ejercicios',
+          categoriaSeleccionada,
+          `ejercicios_${categoriaSeleccionada.toLowerCase()}`
+        );
+
+        // Obtener los documentos de la subcolección
+        const snapshot = await getDocs(ejerciciosRef);
+        const listaEjercicios = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        setEjercicios(listaEjercicios); // Guardar en el estado
+        setNombreCategoria(categoriaSeleccionada); // Establece el nombre de la categoría seleccionada
+      } catch (error) {
+        console.error('Error al cargar los ejercicios:', error);
+      }
+    };
+
+    cargarEjercicios();
+  }, [categoriaSeleccionada]); // Se ejecuta cada vez que cambia la categoría seleccionada
 
   return (
     <Background>
@@ -15,41 +50,55 @@ const Inicio = ({ navigation }) => {
           <Text style={styles.txtSaludo}>Hola, {nombreUsuario}!</Text>
           <Icon name="menu" size={30} style={styles.iconMenu} />
         </View>
-        
-        <Text style={styles.txtRecordatorioRutina}>Recuerda que hoy toca entrenar: Pierna</Text>
-        
-        {/* Tabla de ejercicios */}
+
+        <Text style={styles.txtRecordatorioRutina}>
+          Recuerda que hoy toca entrenar: {nombreCategoria}
+        </Text>
+
+        {/* Selección de la categoría de ejercicio */}
+        <Picker
+          selectedValue={categoriaSeleccionada}
+          onValueChange={(itemValue) => setCategoriaSeleccionada(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Pierna" value="Pierna" />
+          <Picker.Item label="Pecho" value="Pecho" />
+          <Picker.Item label="Bíceps" value="Biceps" />
+          <Picker.Item label="Espalda" value="Espalda" />
+        </Picker>
+
         <View style={styles.tabla}>
           <Text style={styles.tablaEncabezado}>Ejercicios del día</Text>
-          <View style={styles.fila}>
-            <Text style={styles.celda}>Press En Prensa</Text>
-          </View>
-          <View style={styles.fila}>
-            <Text style={styles.celda}>Sentadilla Libre</Text>
-          </View>
-          <View style={styles.fila}>
-            <Text style={styles.celda}>Extensiones de cuadriceps</Text>
-          </View>
-          <View style={styles.fila}>
-            <Text style={styles.celda}>Sentadilla hack</Text>
-          </View>
+          {ejercicios.length > 0 ? (
+            ejercicios.map((ejercicio, index) => (
+              <View key={index} style={styles.fila}>
+                <Text style={styles.celda}>{ejercicio.nombre || ejercicio.id}</Text>
+              </View>
+            ))
+          ) : (
+            <Text style={styles.noEjercicios}>No hay ejercicios disponibles</Text>
+          )}
         </View>
+
         <Text style={styles.txtEntrenamientos}>Mis entrenamientos</Text>
         <Text style={styles.txtRutinasEntrenamiento}>Crea tus propias rutinas de entrenamiento</Text>
+
         <Card style={styles.card}>
           <Card.Content>
             <Text style={styles.titleHeaderCard}>Entrenamiento en progreso</Text>
             <Text style={styles.textTonoMuscular}>Tono Muscular</Text>
             <Text style={styles.textProgreso}>Progreso 0%</Text>
-            <ProgressBar progress={1} style={styles.progressBar} />
+            <ProgressBar progress={0.1} style={styles.progressBar} />
           </Card.Content>
         </Card>
+
         <Card style={styles.card}>
           <Card.Content>
             <Text style={styles.txtCrearRutina}>Crear una rutina de entrenamiento</Text>
             <Icon name="add-circle" size={60} style={styles.iconAdd}></Icon>
           </Card.Content>
         </Card>
+
         <Button
           title="Ir a Comunidad"
           onPress={() => navigation.navigate('Comunidad')}
@@ -57,11 +106,14 @@ const Inicio = ({ navigation }) => {
         <Button
           title="Ir a Calendario"
           onPress={() => navigation.navigate('Calendario')}
-          />
+        />
       </View>
     </Background>
   );
 };
+
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -163,6 +215,13 @@ const styles = StyleSheet.create({
     height: 10,  // Grosor de la barra de progreso
     borderRadius: 10,  // Esquinas redondeadas
     backgroundColor: '#e0e0e0',  // Color de fondo de la barra
+  },
+  picker: {
+    width: '100%',
+    height: 20,
+    backgroundColor: '#6bbcff',
+    color: 'white',
+    marginBottom: 20,
   },
 });
 

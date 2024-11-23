@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { db } from '../Firebase';
-import { doc, updateDoc, getDoc, setDoc, addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection } from 'firebase/firestore';
 import { ALERT_TYPE, Dialog } from 'react-native-alert-notification';
 import { Picker } from '@react-native-picker/picker';
 import Background from '../hooks/ImageBackground';
@@ -41,6 +41,10 @@ const EstadoFisico = ({ route, navigation }) => {
         title: 'Éxito',
         textBody: 'Usuario creado correctamente',
         button: 'Cerrar',
+        style: {
+          justifyContent: 'center',
+          alignItems: 'center',
+        },
       });
       navigation.navigate('Inicio');
     } catch (error) {
