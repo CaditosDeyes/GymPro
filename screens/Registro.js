@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification, updateCurrentUser } from 'firebase/auth';
 import { auth} from '../Firebase';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { ALERT_TYPE, Dialog } from 'react-native-alert-notification';
@@ -12,6 +12,7 @@ const Registro = ({navigation}) => {
   const [correoElectronico, setCorreoElectronico] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showContrasena, setshowContrasena] = useState(false);
 
   const handleSignUp = async () => {
     if(!nombre || !apellido || !correoElectronico || !contrasena) {
@@ -49,10 +50,34 @@ const Registro = ({navigation}) => {
     
     setLoading(true);
     try {
+      //Se crea el usuario
       const userCredentials = await createUserWithEmailAndPassword(auth, correoElectronico, contrasena);
       const user = userCredentials.user;
 
-      navigation.navigate('EstadoFisico', {uid:user.uid, nombre, apellido, correoElectronico});
+      //Se envia el enlace de verificacion de correo
+      await sendEmailVerification(user);
+      Dialog.show({
+        type:ALERT_TYPE.SUCCESS,
+        title: 'Registro Exitoso',
+        textBody: 'Se ha enviado un enlace de verificación a tu correo electronico. Por favor, verifica tu correo antes de iniciar sesión.',
+        button: 'Cerrar'
+      });
+
+      //Verificar si el correo está verificado
+      const interval = setInterval(async () => {
+        await user.reload(); //Recargar el estado del usuario
+        if(user.emailVerified) {
+          clearInterval(interval);
+          Dialog.show({
+            type: ALERT_TYPE.SUCCESS,
+            title: 'Verificación Completada',
+            textBody: 'Correo electronico verificado. Continuando con el registro.',
+            button: 'Cerrar',
+          });
+          navigation.navigate('EstadoFisico', {uid:user.uid, nombre, apellido, correoElectronico});
+        }
+      }, 3000); //Verificar cada 3 segundos
+
     } catch (error) {
       if(error.code === 'auth/email-already-in-use'){
         Dialog.show({
@@ -73,8 +98,6 @@ const Registro = ({navigation}) => {
       setLoading(false);
     }
   };
-
-  const [showContrasena, setshowContrasena] = useState(false);
 
   const SignIn = () => {
     navigation.navigate('Login');
