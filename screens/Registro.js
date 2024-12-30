@@ -71,7 +71,7 @@ const Registro = ({navigation}) => {
           Dialog.show({
             type: ALERT_TYPE.SUCCESS,
             title: 'Verificación Completada',
-            textBody: 'Correo electronico verificado. Continuando con el registro.',
+            textBody: 'Correo electronico verificado. Puedes continuar con tu registro.',
             button: 'Cerrar',
           });
           navigation.navigate('EstadoFisico', {uid:user.uid, nombre, apellido, correoElectronico});
@@ -147,7 +147,7 @@ const Registro = ({navigation}) => {
           </TouchableOpacity>
         <Text style={styles.txtCuenta}>¿Ya tienes una cuenta?</Text>
         <TouchableOpacity onPress={SignIn}>
-          <Text style={[styles.txtIniciaSesion]}>Inicia Sesión</Text>
+          <Text style={styles.txtIniciaSesion}>Inicia Sesión</Text>
         </TouchableOpacity>
       </View>
     </Background>
@@ -270,6 +270,7 @@ const styles = StyleSheet.create({
     marginLeft: 205,
     textDecorationLine: 'underline',
   },
+  
 });
 
 export default Registro;

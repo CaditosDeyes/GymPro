@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import LOGIN from './screens/Login';
 import REGISTRO from './screens/Registro';
+import RESTABLECERCONTRASENA from './screens/RestablecerContrasena';
 import INICIO from './screens/Inicio';
 import COMUNIDAD from './screens/Comunidad/Comunidad';
 import Calendario from './screens/Calendario';
@@ -17,6 +18,7 @@ const Navegacion = () => {
             <Stack.Navigator>
                 <Stack.Screen name="Login" component={LOGIN} options={{ headerShown: false }} />
                 <Stack.Screen name="Registro" component={REGISTRO} options={{ headerShown: false }} />
+                <Stack.Screen name ="RestablecerContrasena" component={RESTABLECERCONTRASENA} options={{headerShown: false}} />
                 <Stack.Screen name="EstadoFisico" component={ESTADO_FISICO} options={{headerShown: false}} />
                 <Stack.Screen name="Inicio" component={INICIO} options={{ headerShown: false }} />
                 <Stack.Screen name="Comunidad" component={COMUNIDAD} options={{ headerShown: false }} />

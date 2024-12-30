@@ -77,6 +77,9 @@ const Login = ({ navigation }) => {
           <TouchableOpacity style={styles.btnIniciarSesion} onPress={SignIn} disabled={loading}>
             {loading ? <ActivityIndicator color="white" /> : <Text style={styles.txtBtnIniciarSesion}>Iniciar Sesión</Text>}
           </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('RestablecerContrasena')}>
+            <Text style={styles.txtOlvidasteContrasena}>¿Olvidaste tu contraseña?</Text>
+          </TouchableOpacity>
           <Text style={styles.txtCuenta}>¿No tienes una cuenta?</Text>
           <TouchableOpacity onPress={SignUp}>
             <Text style={[styles.txtRegistrate]}>Registrate</Text>
@@ -165,8 +168,14 @@ const styles = StyleSheet.create({
   txtCuenta: {
     color: 'white',
     fontSize: 20,
-    marginTop: 30,
+    marginTop: 20,
     marginRight: 110,
+  },
+  txtOlvidasteContrasena: {
+    color: 'white',
+    fontSize: 20,
+    marginTop: 20,
+    textDecorationLine: 'underline',
   },
   txtRegistrate: {
     color: 'white',
@@ -175,6 +184,7 @@ const styles = StyleSheet.create({
     marginLeft: 200,
     textDecorationLine: 'underline',
   },
+
 });
 
 export default Login;
