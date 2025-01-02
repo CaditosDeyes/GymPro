@@ -1,47 +1,59 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet, Touchable, TouchableOpacity, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Card, ProgressBar } from 'react-native-paper';
 import useNombreUsuario from '../hooks/ObtenerNombreUsuario';
 import Background from '../hooks/ImageBackground';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../Firebase';
-import { Picker } from '@react-native-picker/picker'; // Importación correcta
+import { Picker } from '@react-native-picker/picker';
 
 const Inicio = ({ navigation }) => {
   const { nombreUsuario } = useNombreUsuario();
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('Pierna'); // Inicializar con una categoría existente
   const [ejercicios, setEjercicios] = useState([]);
   const [nombreCategoria, setNombreCategoria] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [ejercicioSeleccionado, setEjercicioSeleccionado] = useState(null);
 
   // Obtener ejercicios según la categoría seleccionada
   useEffect(() => {
     const cargarEjercicios = async () => {
       try {
-        // Ruta de la subcolección correspondiente
         const ejerciciosRef = collection(
           db,
           'ejercicios',
           categoriaSeleccionada,
           `ejercicios_${categoriaSeleccionada.toLowerCase()}`
         );
-
-        // Obtener los documentos de la subcolección
+  
         const snapshot = await getDocs(ejerciciosRef);
         const listaEjercicios = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-
-        setEjercicios(listaEjercicios); // Guardar en el estado
-        setNombreCategoria(categoriaSeleccionada); // Establece el nombre de la categoría seleccionada
+  
+        //console.log('Ejercicios obtenidos:', listaEjercicios);
+        setEjercicios(listaEjercicios);
+        setNombreCategoria(categoriaSeleccionada);
       } catch (error) {
         console.error('Error al cargar los ejercicios:', error);
       }
     };
-
+  
     cargarEjercicios();
-  }, [categoriaSeleccionada]); // Se ejecuta cada vez que cambia la categoría seleccionada
+  }, [categoriaSeleccionada]);
+  
+
+  const abrirModal = (ejercicio) => {
+    setEjercicioSeleccionado(ejercicio);
+    setModalVisible(true);
+  };
+
+  const cerrarModal = () => {
+    setModalVisible(false);
+    setEjercicioSeleccionado(null);
+  }
 
   return (
     <Background>
@@ -71,14 +83,43 @@ const Inicio = ({ navigation }) => {
           <Text style={styles.tablaEncabezado}>Ejercicios del día</Text>
           {ejercicios.length > 0 ? (
             ejercicios.map((ejercicio, index) => (
-              <View key={index} style={styles.fila}>
+              <TouchableOpacity key={index} style={styles.fila} onPress={() => abrirModal(ejercicio)}>
                 <Text style={styles.celda}>{ejercicio.nombre || ejercicio.id}</Text>
-              </View>
+              </TouchableOpacity>
             ))
           ) : (
             <Text style={styles.noEjercicios}>No hay ejercicios disponibles</Text>
           )}
         </View>
+
+        <Modal 
+          visible={modalVisible} 
+          animationType="slide" 
+          transparent={true} 
+          onRequestClose={cerrarModal}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              {/* Verificar si ejercicioSeleccionado existe antes de mostrar el título */}
+              <Text style={styles.modalTitle}>
+                {ejercicioSeleccionado ? ejercicioSeleccionado.nombre : 'Cargando...'}
+              </Text>
+              {ejercicioSeleccionado && (
+                <>
+                  <Text style={styles.modalText}>
+                    <Text style={styles.modalHeader}>Descripción: </Text>
+                    {ejercicioSeleccionado.descripcion || 'Sin descripción'}
+                  </Text>
+                  <Text style={styles.modalText}>
+                    <Text style={styles.modalHeader}>Repeticiones: </Text>
+                    {ejercicioSeleccionado.repeticiones || 'N/A'}
+                  </Text>
+                </>
+              )}
+              <Button title="Cerrar" onPress={cerrarModal} />
+            </View>
+          </View>
+        </Modal>
 
         <Text style={styles.txtEntrenamientos}>Mis entrenamientos</Text>
         <Text style={styles.txtRutinasEntrenamiento}>Crea tus propias rutinas de entrenamiento</Text>
@@ -111,9 +152,6 @@ const Inicio = ({ navigation }) => {
     </Background>
   );
 };
-
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -222,6 +260,32 @@ const styles = StyleSheet.create({
     backgroundColor: '#6bbcff',
     color: 'white',
     marginBottom: 20,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 80,
+    borderRadius: 20,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: 'black'
+  },
+  modalHeader: {
+    color: 'black',
+    fontWeight: 'bold'
+  },
+  modalText: {
+    fontSize: 17,
+    marginBottom: 10,
   },
 });
 
