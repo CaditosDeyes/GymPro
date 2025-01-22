@@ -4,7 +4,9 @@ import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { GoogleSignin } from '@react-native-google-signin/google-signin';  // Importar GoogleSignin
-import { API_KEY, APP_ID, AUTH_DOMAIN, MESSAGING_SENDER_ID, PROJECT_ID, STORAGE_BUCKET, WEB_CLIENT_ID } from "./CREDENCIALES";
+//import { API_KEY, APP_ID, AUTH_DOMAIN, MESSAGING_SENDER_ID, PROJECT_ID, STORAGE_BUCKET, WEB_CLIENT_ID } from "../CREDENCIALES";
+import { API_KEY, APP_ID, AUTH_DOMAIN, MESSAGING_SENDER_ID, PROJECT_ID, STORAGE_BUCKET, WEB_CLIENT_ID } from "C:/Users/danie/Documents/Modular/GymProGit/GymProGit/GymPro/CREDENCIALES";
+
 
 const firebaseConfig = {
   apiKey: API_KEY,
