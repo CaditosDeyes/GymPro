@@ -10,7 +10,7 @@ import { Picker } from '@react-native-picker/picker';
 
 const Inicio = ({ navigation }) => {
   const { nombreUsuario } = useNombreUsuario();
-  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('Pierna'); // Inicializar con una categoría existente
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('Pecho'); // Inicializar con una categoría existente
   const [ejercicios, setEjercicios] = useState([]);
   const [nombreCategoria, setNombreCategoria] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -60,7 +60,9 @@ const Inicio = ({ navigation }) => {
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.txtSaludo}>Hola, {nombreUsuario}!</Text>
-          <Icon name="menu" size={30} style={styles.iconMenu} />
+          <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
+            <Icon name="menu" size={30} style={styles.iconMenu} />
+          </TouchableOpacity>
         </View>
 
         <Text style={styles.txtRecordatorioRutina}>
