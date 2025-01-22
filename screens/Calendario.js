@@ -3,6 +3,7 @@ import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, Modal, TextI
 import { useNavigation } from '@react-navigation/native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import moment from 'moment';
+import Background from '../hooks/ImageBackground';
 
 
 // Configuración del calendario en español
@@ -65,7 +66,7 @@ const Calendario = () => {
   };
 
   return (
-    <ImageBackground source={require('../img/background_image.jpg')} style={styles.background}>
+    <Background>
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => handleMonthChange(-1)} style={styles.arrowButton}>
@@ -157,7 +158,7 @@ const Calendario = () => {
           <Button title="Cancelar" onPress={() => setModalVisible(false)} />
         </View>
       </Modal>
-    </ImageBackground>
+    </Background>
   );
 };
 
