@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, ImageBackground, StyleSheet, Image, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth, db } from '../Firebase';
-import { addDoc, collection } from 'firebase/firestore';
+import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { createUserWithEmailAndPassword, sendEmailVerification, updateCurrentUser } from 'firebase/auth';
+import { auth} from '../Firebase';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { ALERT_TYPE, Dialog } from 'react-native-alert-notification';
+import Background from '../hooks/ImageBackground';
 
 const Registro = ({navigation}) => {
   const [nombre, setNombre] = useState('');
@@ -13,102 +12,145 @@ const Registro = ({navigation}) => {
   const [correoElectronico, setCorreoElectronico] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showContrasena, setshowContrasena] = useState(false);
 
   const handleSignUp = async () => {
     if(!nombre || !apellido || !correoElectronico || !contrasena) {
-      Alert.alert("Error", "Por favor, llena todos los campos");
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Error',
+        textBody: 'Por favor, llena todos los campos',
+        button: 'Cerrar'
+      });
       return;
     }
 
     //Validación de formato de correo electronico
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if(!emailRegex.test(correoElectronico)){
-      Alert.alert("Error", "Por favor, ingresa un correo electronico valido");
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Error',
+        textBody: 'Por favor, ingresa un formato de correo electronico valido',
+        button: 'Cerrar'
+      });
       return;
     }
 
     //Validacion de longitud de contraseña
     if(contrasena.length < 6){
-      Alert.alert("Error", "La contraseña debe tener al menos 6 caracteres");
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Error',
+        textBody: 'La contraseña debe tener al menos 6 caracteres',
+        button: 'Cerrar'
+      });
       return;
     }
     
     setLoading(true);
     try {
+      //Se crea el usuario
       const userCredentials = await createUserWithEmailAndPassword(auth, correoElectronico, contrasena);
       const user = userCredentials.user;
 
-      // Guardar la información adicional del usuario en Firestore
-      await addDoc(collection(db, 'usuarios'), {
-        uid: user.uid,
-        nombre: nombre,
-        apellido: apellido,
-        correoElectronico: correoElectronico,
+      //Se envia el enlace de verificacion de correo
+      await sendEmailVerification(user);
+      Dialog.show({
+        type:ALERT_TYPE.SUCCESS,
+        title: 'Registro Exitoso',
+        textBody: 'Se ha enviado un enlace de verificación a tu correo electronico. Por favor, verifica tu correo antes de iniciar sesión.',
+        button: 'Cerrar'
       });
 
-      Alert.alert("Registro exitoso", "Usuario registrado correctamente");
-      navigation.navigate('Inicio');
+      //Verificar si el correo está verificado
+      const interval = setInterval(async () => {
+        await user.reload(); //Recargar el estado del usuario
+        if(user.emailVerified) {
+          clearInterval(interval);
+          Dialog.show({
+            type: ALERT_TYPE.SUCCESS,
+            title: 'Verificación Completada',
+            textBody: 'Correo electronico verificado. Puedes continuar con tu registro.',
+            button: 'Cerrar',
+          });
+          navigation.navigate('EstadoFisico', {uid:user.uid, nombre, apellido, correoElectronico});
+        }
+      }, 3000); //Verificar cada 3 segundos
+
     } catch (error) {
-      Alert.alert("Error al registrar:", error.message);
+      if(error.code === 'auth/email-already-in-use'){
+        Dialog.show({
+          type: ALERT_TYPE.DANGER,
+          title: 'Error',
+          textBody: 'El correo electrónico ya está en uso, intenta de nuevo',
+          button: 'Cerrar'
+        });
+      }else{
+        Dialog.show({
+          type: ALERT_TYPE.DANGER,
+          title: 'Error',
+          textBody: 'Error al registrar al usuario',
+          button: 'Cerrar'
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
-
-  const [showContrasena, setshowContrasena] = useState(false);
 
   const SignIn = () => {
     navigation.navigate('Login');
   }
 
   return (
-    <ImageBackground source={require('../img/background_image.jpg')} style={styles.background}>
-    <View style={styles.container}>
-      <Image source={require('../img/gymProLogo.png')} style={styles.logoImage}/>
-      <Text style={styles.txtRegistrate}>Registrate</Text>
-      <TextInput
-          style={styles.txtNombre}
-          placeholder="Nombre"
-          placeholderTextColor={'white'}
-          value={nombre}
-          onChangeText={setNombre}
-        />
+    <Background>
+      <View style={styles.container}>
+        <Image source={require('../img/gymProLogo.png')} style={styles.logoImage}/>
+        <Text style={styles.txtRegistrate}>Registrate</Text>
         <TextInput
-          style={styles.txtApellido}
-          placeholder="Apellido"
-          placeholderTextColor={'white'}
-          value={apellido}
-          onChangeText={setApellido}
-        />
-      <TextInput
-        style={styles.txtCorreoElectronico}
-        placeholder="Correo Electrónico"
-        placeholderTextColor={'white'}
-        value={correoElectronico}
-        onChangeText={setCorreoElectronico}
-      />
-      <View style={styles.passwordContainer}>
+            style={styles.txtNombre}
+            placeholder="Nombre"
+            placeholderTextColor={'white'}
+            value={nombre}
+            onChangeText={setNombre}
+          />
+          <TextInput
+            style={styles.txtApellido}
+            placeholder="Apellido"
+            placeholderTextColor={'white'}
+            value={apellido}
+            onChangeText={setApellido}
+          />
         <TextInput
-          style={styles.txtContrasena}
-          placeholder="Contraseña"
+          style={styles.txtCorreoElectronico}
+          placeholder="Correo Electrónico"
           placeholderTextColor={'white'}
-          secureTextEntry={!showContrasena} // Alternar visibilidad
-          value={contrasena}
-          onChangeText={(text) => setContrasena(text)}
+          value={correoElectronico}
+          onChangeText={setCorreoElectronico}
         />
-        <TouchableOpacity style={styles.iconEye} onPress={() => setshowContrasena(!showContrasena)}>
-          <Icon name={showContrasena ? "visibility-off" : "visibility"} size={24} color="white" />
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.txtContrasena}
+            placeholder="Contraseña"
+            placeholderTextColor={'white'}
+            secureTextEntry={!showContrasena} // Alternar visibilidad
+            value={contrasena}
+            onChangeText={(text) => setContrasena(text)}
+          />
+          <TouchableOpacity style={styles.iconEye} onPress={() => setshowContrasena(!showContrasena)}>
+            <Icon name={showContrasena ? "visibility-off" : "visibility"} size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity style={styles.btnRegistrarse} onPress={handleSignUp} disabled={loading}>
+            {loading ? <ActivityIndicator color="white" /> : <Text style={styles.txtBtnRegistrarse}>Continuar</Text>}
+          </TouchableOpacity>
+        <Text style={styles.txtCuenta}>¿Ya tienes una cuenta?</Text>
+        <TouchableOpacity onPress={SignIn}>
+          <Text style={styles.txtIniciaSesion}>Inicia Sesión</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.btnRegistrarse} onPress={handleSignUp} disabled={loading}>
-          {loading ? <ActivityIndicator color="white" /> : <Text style={styles.txtBtnRegistrarse}>Registrarse</Text>}
-        </TouchableOpacity>
-      <Text style={styles.txtCuenta}>¿Ya tienes una cuenta?</Text>
-      <TouchableOpacity onPress={SignIn}>
-        <Text style={[styles.txtIniciaSesion]}>Inicia Sesión</Text>
-      </TouchableOpacity>
-    </View>
-    </ImageBackground>
+    </Background>
   );
 };
 
@@ -228,6 +270,7 @@ const styles = StyleSheet.create({
     marginLeft: 205,
     textDecorationLine: 'underline',
   },
+  
 });
 
 export default Registro;

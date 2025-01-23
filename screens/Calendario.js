@@ -5,7 +5,7 @@ import { Calendar, LocaleConfig } from 'react-native-calendars';
 import moment from 'moment';
 
 import { db, auth, GoogleSignin } from '../Firebase'; //  aqui depende de la produndiddd de la carpeta
-console.log('¡Conexión a Firebase exitosa!', db);
+// console.log('¡Conexión a Firebase exitosa!', db);
 
 
 //Firebase y DateTimePicker Helpers ===
