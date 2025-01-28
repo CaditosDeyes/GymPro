@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, Touchable, TouchableOpacity, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Card, ProgressBar } from 'react-native-paper';
-import useNombreUsuario from '../hooks/ObtenerNombreUsuario';
 import Background from '../hooks/ImageBackground';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../Firebase';
 import { Picker } from '@react-native-picker/picker';
+import useUsuarioInfo from '../hooks/UseUsuarioInfo';
 
 const Inicio = ({ navigation }) => {
-  const { nombreUsuario } = useNombreUsuario();
+  const { usuarioInfo } = useUsuarioInfo();
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('Pecho'); // Inicializar con una categoría existente
   const [ejercicios, setEjercicios] = useState([]);
   const [nombreCategoria, setNombreCategoria] = useState('');
@@ -59,7 +59,7 @@ const Inicio = ({ navigation }) => {
     <Background>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.txtSaludo}>Hola, {nombreUsuario}!</Text>
+          <Text style={styles.txtSaludo}>Hola, {usuarioInfo.nombre}!</Text>
           <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
             <Icon name="menu" size={30} style={styles.iconMenu} />
           </TouchableOpacity>
