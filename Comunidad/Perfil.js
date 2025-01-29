@@ -155,11 +155,12 @@ const Perfil = ({ navigation }) => {
   {/* Botón 1: Regresar a comunidad */}
   <TouchableOpacity
     style={styles.button}
-    onPress={() => navigation.navigate('Comunidad')} // Navegar a la pantalla "Comunidad"
+    onPress={() => navigation.navigate('ComunidadMain')} // Regresa a la pantalla principal del stack
   >
     <Icon name="keyboard-backspace" size={20} color="#fff" />
     <Text style={styles.buttonText}>Regresar a comunidad</Text>
   </TouchableOpacity>
+
 
   {/* Botón 2: Mis publicaciones */}
   <TouchableOpacity

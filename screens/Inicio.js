@@ -60,9 +60,6 @@ const Inicio = ({ navigation }) => {
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.txtSaludo}>Hola, {usuarioInfo.nombre}!</Text>
-          <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
-            <Icon name="menu" size={30} style={styles.iconMenu} />
-          </TouchableOpacity>
         </View>
 
         <Text style={styles.txtRecordatorioRutina}>
@@ -141,15 +138,6 @@ const Inicio = ({ navigation }) => {
             <Icon name="add-circle" size={60} style={styles.iconAdd}></Icon>
           </Card.Content>
         </Card>
-
-        <Button
-          title="Ir a Comunidad"
-          onPress={() => navigation.navigate('Comunidad')}
-        />
-        <Button
-          title="Ir a Calendario"
-          onPress={() => navigation.navigate('Calendario')}
-        />
       </View>
     </Background>
   );
@@ -179,9 +167,6 @@ const styles = StyleSheet.create({
     color: "white",
     marginTop: 5,
     marginLeft: 10,
-  },
-  iconMenu: {
-    color: "white",
   },
   tabla: {
     marginTop: 20,
