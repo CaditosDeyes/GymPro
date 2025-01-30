@@ -114,6 +114,7 @@ const Registro = ({navigation}) => {
             placeholderTextColor={'white'}
             value={nombre}
             onChangeText={setNombre}
+            selectionColor="orange"
           />
           <TextInput
             style={styles.txtApellido}
@@ -121,6 +122,7 @@ const Registro = ({navigation}) => {
             placeholderTextColor={'white'}
             value={apellido}
             onChangeText={setApellido}
+            selectionColor="orange"
           />
         <TextInput
           style={styles.txtCorreoElectronico}
@@ -128,6 +130,7 @@ const Registro = ({navigation}) => {
           placeholderTextColor={'white'}
           value={correoElectronico}
           onChangeText={setCorreoElectronico}
+          selectionColor="orange"
         />
         <View style={styles.passwordContainer}>
           <TextInput
@@ -137,6 +140,7 @@ const Registro = ({navigation}) => {
             secureTextEntry={!showContrasena} // Alternar visibilidad
             value={contrasena}
             onChangeText={(text) => setContrasena(text)}
+            selectionColor="orange"
           />
           <TouchableOpacity style={styles.iconEye} onPress={() => setshowContrasena(!showContrasena)}>
             <Icon name={showContrasena ? "visibility-off" : "visibility"} size={24} color="white" />
@@ -166,7 +170,7 @@ const styles = StyleSheet.create({
   logoImage: {
     height: 250,
     width: 250,
-    marginTop: -122,
+    marginTop: -80,
     marginLeft: 5,
   },
   txtRegistrate: {

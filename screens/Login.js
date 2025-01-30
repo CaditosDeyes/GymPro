@@ -1,29 +1,41 @@
-import React, { useState } from 'react';
-import { View, Text, ImageBackground, Image, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
-import { getAuth,signInWithEmailAndPassword } from 'firebase/auth';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import appFirebase from '../Firebase';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { ALERT_TYPE, Dialog, AlertNotificationRoot} from 'react-native-alert-notification';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot } from 'react-native-alert-notification';
 import Background from '../hooks/ImageBackground';
+import ReactNativeBiometrics from 'react-native-biometrics';
 
 const auth = getAuth(appFirebase);
 
 const Login = ({ navigation }) => {
-  const [correoElectronico, setCorreoElectronico] = useState();
-  const [contrasena, setContrasena] = useState();
+  const [correoElectronico, setCorreoElectronico] = useState('');
+  const [contrasena, setContrasena] = useState('');
   const [loading, setLoading] = useState(false);
+  const [biometricsAvailable, setBiometricsAvailable] = useState(false);
+
+  // Función para verificar la disponibilidad de biometría
+  useEffect(() => {
+    const checkBiometricsAvailability = async () => {
+      const rnBiometrics = new ReactNativeBiometrics();
+      const { available } = await rnBiometrics.isSensorAvailable();
+      setBiometricsAvailable(available);
+    };
+    checkBiometricsAvailability();
+  }, []);
 
   const SignIn = async () => {
-    if(!correoElectronico || !contrasena) {
+    if (!correoElectronico || !contrasena) {
       Dialog.show({
         type: ALERT_TYPE.DANGER,
         title: 'Error',
         textBody: 'Por favor, llena todos los campos',
-        button: 'Cerrar'
+        button: 'Cerrar',
       });
       return;
     }
-    
+
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, correoElectronico, contrasena);
@@ -33,19 +45,48 @@ const Login = ({ navigation }) => {
         type: ALERT_TYPE.DANGER,
         title: 'Error',
         textBody: 'Por favor, verifica tus credenciales',
-        button: 'Cerrar'
-      })
+        button: 'Cerrar',
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const [showContrasena, setshowContrasena] = useState(false);
+  // Función para iniciar sesión con biometría
+  const authenticateWithBiometrics = async () => {
+    const rnBiometrics = new ReactNativeBiometrics();
+
+    const { available, biometryType } = await rnBiometrics.isSensorAvailable();
+
+    if (available && (biometryType === 'TouchID' || biometryType === 'FaceID' || biometryType === 'Biometrics')) {
+      const { success } = await rnBiometrics.simplePrompt({ promptMessage: 'Iniciar sesión con biometría' });
+
+      if (success) {
+        // Aquí se puede autenticar el usuario sin necesidad de correo y contraseña
+        navigation.navigate('Inicio');
+      } else {
+        Dialog.show({
+          type: ALERT_TYPE.WARNING,
+          title: 'Autenticación Fallida',
+          textBody: 'No se pudo autenticar con biometría',
+          button: 'Cerrar',
+        });
+      }
+    } else {
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Biometría no disponible',
+        textBody: 'Tu dispositivo no soporta huella o reconocimiento facial',
+        button: 'Cerrar',
+      });
+    }
+  };
+
+  const [showContrasena, setShowContrasena] = useState(false);
 
   const SignUp = () => {
     navigation.navigate('Registro');
   };
-
   return (
     <AlertNotificationRoot>
       <Background>
@@ -77,6 +118,11 @@ const Login = ({ navigation }) => {
           <TouchableOpacity style={styles.btnIniciarSesion} onPress={SignIn} disabled={loading}>
             {loading ? <ActivityIndicator color="white" /> : <Text style={styles.txtBtnIniciarSesion}>Iniciar Sesión</Text>}
           </TouchableOpacity>
+          {/* Botón de autenticación biométrica */}
+          <TouchableOpacity style={styles.btnBiometrico} onPress={authenticateWithBiometrics}>
+            <Icon name="fingerprint" size={30} color="white" />
+            <Text style={styles.txtBtnBiometrico}>Usar biometría</Text>
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('RestablecerContrasena')}>
             <Text style={styles.txtOlvidasteContrasena}>¿Olvidaste tu contraseña?</Text>
           </TouchableOpacity>
@@ -100,7 +146,7 @@ const styles = StyleSheet.create({
   logoImage: {
     height: 250,
     width: 250,
-    marginTop: -200,
+    marginTop: -100,
     marginLeft: 18,
   },
   txtBienvenida: {
@@ -164,6 +210,21 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     marginTop: -4,
+  },
+  btnBiometrico: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#4CAF50',
+    width: 280,
+    height: 43,
+    borderRadius: 20,
+    marginTop: 20,
+    justifyContent: 'center',
+  },
+  txtBtnBiometrico: {
+    color: 'white',
+    fontSize: 18,
+    marginLeft: 10,
   },
   txtCuenta: {
     color: 'white',
